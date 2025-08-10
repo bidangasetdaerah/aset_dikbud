@@ -116,7 +116,8 @@ function validateLogin(username, password) {
 
 function setSession(username) {
   sessionStorage.setItem('loggedUser', username);
-  showLoggedIn(username);
+  // langsung arahkan ke asetdikbud.html
+  window.location.href = 'asetdikbud.html';
 }
 function clearSession() {
   sessionStorage.removeItem('loggedUser');
@@ -125,7 +126,8 @@ function clearSession() {
 function checkSession() {
   const u = sessionStorage.getItem('loggedUser');
   if (u) {
-    showLoggedIn(u);
+    // jika sudah login, langsung ke asetdikbud.html
+    window.location.href = 'asetdikbud.html';
   } else {
     showLoggedOut();
   }
@@ -163,7 +165,7 @@ btnLogout.addEventListener('click', () => {
   passwordInput.value = '';
 });
 btnGo.addEventListener('click', () => {
-  alert('Lanjut ke aplikasi.');
+  window.location.href = 'asetdikbud.html';
 });
 
 loadUsers();
