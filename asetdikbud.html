@@ -42,11 +42,11 @@
 
     <!-- Menu item dengan dropdown KIB -->
     <div class="group border-b border-gray-200">
-      <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
+      <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none" type="button" aria-expanded="false" aria-controls="kibDropdown">
         <span class="font-medium text-gray-700">KIB</span>
         <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
       </button>
-      <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
+      <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200" role="region" aria-label="Dropdown KIB">
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB B</a>
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB C</a>
       </div>
@@ -54,11 +54,11 @@
 
     <!-- Menu item dengan dropdown Rekapan -->
     <div class="group border-b border-gray-200">
-      <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
+      <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none" type="button" aria-expanded="false" aria-controls="rekapanDropdown">
         <span class="font-medium text-gray-700">Rekapan</span>
         <svg id="rekapanArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
       </button>
-      <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
+      <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200" role="region" aria-label="Dropdown Rekapan">
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB B</a>
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
       </div>
@@ -109,7 +109,7 @@
     document.getElementById('welcomeMsg').textContent = `Selamat datang, ${user.nama}`;
   }
 
-  // Dropdown toggle function
+  // Dropdown toggle function with aria-expanded toggle
   function toggleDropdown(btnId, dropdownId, arrowId) {
     const btn = document.getElementById(btnId);
     const dropdown = document.getElementById(dropdownId);
@@ -120,9 +120,11 @@
       if (isHidden) {
         dropdown.classList.remove('hidden');
         arrow.classList.add('rotate-90');
+        btn.setAttribute('aria-expanded', 'true');
       } else {
         dropdown.classList.add('hidden');
         arrow.classList.remove('rotate-90');
+        btn.setAttribute('aria-expanded', 'false');
       }
     });
   }
@@ -155,8 +157,8 @@
       allData = rows.map(r => r.c.map(cell => (cell ? cell.v : '')));
       filteredData = [...allData];
 
-      kibColIndex = cols.findIndex(c => c.toLowerCase().includes('kib peralatan dan mesin'));
-      dokBarcodeColIndex = cols.findIndex(c => c.toLowerCase().includes('dokumen barcode'));
+      kibColIndex = cols.findIndex(c => c && c.toLowerCase().includes('kib peralatan dan mesin'));
+      dokBarcodeColIndex = cols.findIndex(c => c && c.toLowerCase().includes('dokumen barcode'));
 
       renderTableHeader(cols);
       renderKecamatanFilter();
@@ -173,7 +175,7 @@
     headerRow.innerHTML = '';
     cols.forEach(col => {
       const th = document.createElement('th');
-      th.textContent = col;
+      th.textContent = col || '';
       th.className = 'px-4 py-3 border border-blue-700 font-semibold text-sm';
       headerRow.appendChild(th);
     });
@@ -195,7 +197,7 @@
         const td = document.createElement('td');
         td.className = 'px-4 py-2 border border-gray-300 align-middle';
 
-        if (idx === kibColIndex) {
+        if (idx === kibColIndex && kibColIndex !== -1) {
           td.classList.add('text-center');
           if (cell && isValidUrl(cell)) {
             const link = document.createElement('a');
@@ -203,13 +205,17 @@
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
             link.title = 'Lihat detail KIB Peralatan dan Mesin';
-            link.innerHTML = '&#128065;';
-            link.classList.add('eye-icon');
+
+            const icon = document.createElement('span');
+            icon.className = 'eye-icon';
+            icon.textContent = '👁️';
+            link.appendChild(icon);
+
             td.appendChild(link);
-            tr.appendChild(td);
-            return;
+          } else {
+            td.textContent = '-';
           }
-        } else if (idx === dokBarcodeColIndex) {
+        } else if (idx === dokBarcodeColIndex && dokBarcodeColIndex !== -1) {
           td.classList.add('text-center');
           if (cell && isValidUrl(cell)) {
             const link = document.createElement('a');
@@ -217,19 +223,24 @@
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
             link.title = 'Lihat Dokumen Barcode';
-            link.innerHTML = '&#128214;';
-            link.classList.add('book-icon');
+
+            const icon = document.createElement('span');
+            icon.className = 'book-icon';
+            icon.textContent = '📖';
+            link.appendChild(icon);
+
             td.appendChild(link);
-            tr.appendChild(td);
-            return;
+          } else {
+            td.textContent = '-';
           }
         } else {
           td.classList.add('text-left');
+          td.textContent = cell;
         }
 
-        td.textContent = cell;
         tr.appendChild(td);
       });
+
       tbody.appendChild(tr);
     });
 
@@ -259,7 +270,7 @@
     // Previous button
     pagination.appendChild(createPageItem(currentPage - 1, '‹', currentPage === 1, false));
 
-    // Page numbers, limit visible pages for usability
+    // Page numbers (max 5 pages visible)
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
 
@@ -301,7 +312,7 @@
       } else {
         filteredData = allData.filter(r => r[kecamatanColIndex] === val);
       }
-      // reset halaman ke 1 dan filter pencarian juga di-reset
+      // Reset pencarian dan render halaman pertama
       document.getElementById('searchInput').value = '';
       renderTablePage(1);
     });
@@ -315,7 +326,7 @@
       filteredData = [...allData];
     } else {
       // kolom nama sekolah di index 2 (sesuaikan jika beda)
-      filteredData = allData.filter(r => (r[2] && r[2].toLowerCase().includes(keyword)));
+      filteredData = allData.filter(r => r[2] && r[2].toLowerCase().includes(keyword));
     }
     // reset filter kecamatan juga ke semua
     document.getElementById('kecamatanFilter').value = '';
