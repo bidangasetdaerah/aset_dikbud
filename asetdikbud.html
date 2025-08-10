@@ -33,9 +33,8 @@
 
   <!-- Navbar kiri -->
   <nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
-    <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700 flex justify-between items-center">
-      <span>Menu</span>
-      <button id="logoutBtn" class="text-red-600 font-semibold hover:text-red-800">Logout</button>
+    <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700">
+      Menu
     </div>
 
     <!-- Menu item dengan dropdown KIB -->
@@ -65,7 +64,7 @@
 
   <!-- Konten utama -->
   <main class="flex-1 p-6 overflow-auto max-w-full">
-    <h2 id="welcomeMsg" class="text-2xl font-semibold mb-6 text-center text-gray-800"></h2>
+    <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Data Satuan Pendidikan</h2>
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 max-w-5xl mx-auto">
       <input id="searchInput" type="text" placeholder="Cari data sekolah..." class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -89,21 +88,6 @@
   </main>
 
 <script>
-  // Logout handler
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem('loggedUser');
-    window.location.href = 'login.html';
-  });
-
-  // Tampilkan nama sekolah saat login
-  const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
-  if (!loggedUser) {
-    // jika belum login, redirect ke login
-    window.location.href = 'login.html';
-  } else {
-    document.getElementById('welcomeMsg').textContent = `Selamat datang, ${loggedUser.nama}`;
-  }
-
   // Toggle dropdown function with arrow rotation
   function toggleDropdown(btnId, dropdownId, arrowId) {
     const btn = document.getElementById(btnId);
@@ -220,16 +204,74 @@
             tr.appendChild(td);
             return;
           }
+        } else {
+          td.classList.add('text-left');
         }
 
-        td.textContent = cell || '';
+        td.textContent = cell;
         tr.appendChild(td);
       });
-
       tbody.appendChild(tr);
     });
 
     renderPagination(page);
+  }
+
+  function renderPagination(currentPage) {
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    function createPageItem(page, label = null, disabled = false, active = false) {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.textContent = label || page;
+      btn.disabled = disabled;
+      btn.className = `px-3 py-1 rounded ${
+        active ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100'
+      } disabled:opacity-50 disabled:cursor-not-allowed transition`;
+      btn.addEventListener('click', () => {
+        if (!disabled) renderTablePage(page);
+      });
+      li.appendChild(btn);
+      return li;
+    }
+
+    pagination.appendChild(createPageItem(currentPage - 1, '« Prev', currentPage === 1));
+
+    for (let i = 1; i <= totalPages; i++) {
+      pagination.appendChild(createPageItem(i, null, false, i === currentPage));
+    }
+
+    pagination.appendChild(createPageItem(currentPage + 1, 'Next »', currentPage === totalPages));
+  }
+
+  function renderKecamatanFilter() {
+    const kecamatanFilter = document.getElementById('kecamatanFilter');
+
+    const kecamatans = [...new Set(allData.map(row => row[kecamatanColIndex]))]
+      .filter(k => k && k.trim() !== '' && !k.toLowerCase().includes('negeri'))
+      .sort();
+
+    kecamatans.forEach(kec => {
+      const option = document.createElement('option');
+      option.value = kec;
+      option.textContent = kec;
+      kecamatanFilter.appendChild(option);
+    });
+  }
+
+  function applyFilters() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const kecamatanFilter = document.getElementById('kecamatanFilter').value;
+
+    filteredData = allData.filter(row => {
+      const matchesSearch = searchTerm === '' || row.some(cell => String(cell).toLowerCase().includes(searchTerm));
+      const matchesKecamatan = kecamatanFilter ? row[kecamatanColIndex] === kecamatanFilter : true;
+      return matchesSearch && matchesKecamatan;
+    });
+
+    renderTablePage(1);
   }
 
   function isValidUrl(str) {
@@ -241,106 +283,10 @@
     }
   }
 
-  // Filter kecamatan untuk dropdown berdasarkan data
-  function renderKecamatanFilter() {
-    const select = document.getElementById('kecamatanFilter');
-    // Ambil list kecamatan unik dari data
-    const kecamatanList = [...new Set(allData.map(row => row[kecamatanColIndex]).filter(Boolean))].sort();
-
-    kecamatanList.forEach(kec => {
-      const option = document.createElement('option');
-      option.value = kec;
-      option.textContent = kec;
-      select.appendChild(option);
-    });
-
-    // Event change filter
-    select.addEventListener('change', () => {
-      applyFilters();
-    });
-  }
-
-  // Event search input
-  document.getElementById('searchInput').addEventListener('input', () => {
-    applyFilters();
-  });
-
-  function applyFilters() {
-    const searchText = document.getElementById('searchInput').value.toLowerCase();
-    const selectedKecamatan = document.getElementById('kecamatanFilter').value;
-
-    filteredData = allData.filter(row => {
-      const namaSekolah = row[1] ? row[1].toLowerCase() : ''; // Asumsikan kolom ke-2 adalah nama sekolah
-      const kecamatan = row[kecamatanColIndex] || '';
-
-      const matchSearch = namaSekolah.includes(searchText);
-      const matchKecamatan = selectedKecamatan ? kecamatan === selectedKecamatan : true;
-
-      return matchSearch && matchKecamatan;
-    });
-
-    renderTablePage(1);
-  }
-
-  // Pagination render dan click
-  function renderPagination(currentPage) {
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-
-    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-    if (totalPages <= 1) return;
-
-    // Fungsi untuk membuat tombol page
-    function createPageButton(page) {
-      const li = document.createElement('li');
-      const btn = document.createElement('button');
-      btn.textContent = page;
-      btn.className = 'px-3 py-1 rounded hover:bg-blue-200 focus:outline-none ' + (page === currentPage ? 'bg-blue-600 text-white' : 'bg-white text-blue-600');
-      btn.addEventListener('click', () => renderTablePage(page));
-      li.appendChild(btn);
-      return li;
-    }
-
-    // Tambah tombol prev
-    if (currentPage > 1) {
-      const liPrev = document.createElement('li');
-      const btnPrev = document.createElement('button');
-      btnPrev.textContent = 'Prev';
-      btnPrev.className = 'px-3 py-1 rounded hover:bg-blue-200 focus:outline-none bg-white text-blue-600';
-      btnPrev.addEventListener('click', () => renderTablePage(currentPage - 1));
-      liPrev.appendChild(btnPrev);
-      pagination.appendChild(liPrev);
-    }
-
-    // Jika banyak halaman, batasi tampilan tombol page agar tidak terlalu banyak
-    let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, currentPage + 2);
-
-    if (currentPage <= 3) {
-      endPage = Math.min(5, totalPages);
-    }
-    if (currentPage > totalPages - 3) {
-      startPage = Math.max(1, totalPages - 4);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pagination.appendChild(createPageButton(i));
-    }
-
-    // Tambah tombol next
-    if (currentPage < totalPages) {
-      const liNext = document.createElement('li');
-      const btnNext = document.createElement('button');
-      btnNext.textContent = 'Next';
-      btnNext.className = 'px-3 py-1 rounded hover:bg-blue-200 focus:outline-none bg-white text-blue-600';
-      btnNext.addEventListener('click', () => renderTablePage(currentPage + 1));
-      liNext.appendChild(btnNext);
-      pagination.appendChild(liNext);
-    }
-  }
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  document.getElementById('kecamatanFilter').addEventListener('change', applyFilters);
 
   loadSheet();
 </script>
-
 </body>
 </html>
