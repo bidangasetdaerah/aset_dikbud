@@ -2,62 +2,76 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login Sistem KIB</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login - Aset Dinas Pendidikan</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm">
+  <h2 class="text-2xl font-bold text-center mb-6 text-blue-700">Login</h2>
+  
+  <div id="errorMsg" class="hidden text-red-600 text-sm mb-4"></div>
 
-<div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
-  <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">Login</h2>
-
-  <div class="mb-4">
-    <label class="block text-gray-700 mb-1">Username</label>
-    <input id="username" type="text" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-  </div>
-
-  <div class="mb-4">
-    <label class="block text-gray-700 mb-1">Password</label>
-    <input id="password" type="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-  </div>
-
-  <button id="loginBtn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
-
-  <p id="errorMsg" class="text-red-600 text-center mt-4 hidden">Username atau password salah</p>
+  <form id="loginForm" class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium">Username</label>
+      <input id="username" type="text" required class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Password</label>
+      <input id="password" type="password" required class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+  </form>
 </div>
 
 <script>
-const SPREADSHEET_ID = "152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U";
-const SHEET_NAME = "user";
+const SPREADSHEET_ID = '152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U';
+const SHEET_NAME = 'user'; // sheet berisi daftar user login
 const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-document.getElementById("loginBtn").addEventListener("click", async () => {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const errorMsg = document.getElementById("errorMsg");
+let userList = [];
 
+// Ambil daftar user dari sheet
+async function loadUsers() {
   try {
     const res = await fetch(url);
     const text = await res.text();
-    const jsonStr = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
+    const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
     const data = JSON.parse(jsonStr);
+    const rows = data.table.rows;
 
-    const rows = data.table.rows.map(r => r.c.map(c => c ? c.v : ""));
-
-    const user = rows.find(r => r[0] === username && r[1] === password);
-
-    if (user) {
-      localStorage.setItem("namaSekolah", user[2] || "Pengguna");
-      window.location.href = "asetdikbud.html";
-    } else {
-      errorMsg.classList.remove("hidden");
-    }
+    // asumsikan kolom: username, password, nama_sekolah
+    userList = rows.map(r => ({
+      username: r.c[0] ? r.c[0].v : '',
+      password: r.c[1] ? r.c[1].v : '',
+      nama: r.c[2] ? r.c[2].v : ''
+    }));
   } catch (err) {
-    console.error(err);
-    alert("Gagal memuat data login.");
+    console.error('Gagal load user:', err);
+    document.getElementById('errorMsg').textContent = 'Gagal memuat data login.';
+    document.getElementById('errorMsg').classList.remove('hidden');
+  }
+}
+
+loadUsers();
+
+document.getElementById('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  const user = userList.find(u => u.username === username && u.password === password);
+
+  if (user) {
+    // simpan ke localStorage
+    localStorage.setItem('loggedUser', JSON.stringify(user));
+    window.location.href = 'index.html';
+  } else {
+    document.getElementById('errorMsg').textContent = 'Username atau password salah.';
+    document.getElementById('errorMsg').classList.remove('hidden');
   }
 });
 </script>
-
 </body>
 </html>
