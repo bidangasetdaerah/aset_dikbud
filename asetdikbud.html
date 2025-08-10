@@ -94,7 +94,7 @@
   // Logout button handler
   document.getElementById('logoutBtn').addEventListener('click', () => {
     localStorage.removeItem('loggedUser');
-    window.location.href = 'login.html';
+    window.location.href = 'index.html';
   });
 
   // Show welcome message with nama sekolah from localStorage
@@ -102,7 +102,7 @@
     const userStr = localStorage.getItem('loggedUser');
     if (!userStr) {
       // Jika belum login, redirect ke login
-      window.location.href = 'login.html';
+      window.location.href = 'index.html';
       return;
     }
     const user = JSON.parse(userStr);
