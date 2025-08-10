@@ -1,175 +1,63 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Login - Data Aset Sekolah Dinas Pendidikan</title>
-
-<!-- Tailwind for styling -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Sistem KIB</title>
 <script src="https://cdn.tailwindcss.com"></script>
-
-<style>
-  body { min-height: 100vh; background: linear-gradient(180deg,#f8fafc,#eef2ff); }
-  .card { max-width: 420px; }
-</style>
 </head>
-<body class="flex items-center justify-center p-6">
+<body class="bg-gray-100 flex items-center justify-center h-screen">
 
-  <div class="card bg-white rounded-lg shadow-lg p-6">
-    <!-- Logo -->
-    <div class="flex justify-center mb-4">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Lambang_Kabupaten_Donggala_%282015-sekarang%29.png" 
-           alt="Logo Pemda Donggala" 
-           class="w-20 h-20 object-contain">
-    </div>
+<div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+  <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">Login</h2>
 
-    <h1 class="text-2xl font-semibold mb-4 text-center text-slate-800">ASET DIKBUD DONGGALA</h1>
-
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">Username</label>
-        <input id="username" type="text" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
-      </div>
-
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">Password</label>
-        <input id="password" type="password" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
-      </div>
-
-      <div class="flex items-center justify-between">
-        <div id="msg" class="text-sm text-red-600"></div>
-        <button type="submit" id="btnSubmit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Login</button>
-      </div>
-    </form>
-
-    <div id="loggedIn" class="hidden mt-6">
-      <p class="text-green-700 font-medium">Anda berhasil login sebagai <span id="userLabel"></span>.</p>
-      <div class="mt-4 flex gap-2">
-        <button id="btnLogout" class="px-3 py-2 bg-red-500 text-white rounded-md">Logout</button>
-        <button id="btnGo" class="px-3 py-2 bg-green-600 text-white rounded-md">Lanjut ke Aplikasi</button>
-      </div>
-    </div>
-
-    <p class="text-xs text-slate-500 mt-4">Catatan: Password dan User Gunakan NPSN Sekolah</p>
+  <div class="mb-4">
+    <label class="block text-gray-700 mb-1">Username</label>
+    <input id="username" type="text" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
   </div>
 
+  <div class="mb-4">
+    <label class="block text-gray-700 mb-1">Password</label>
+    <input id="password" type="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+  </div>
+
+  <button id="loginBtn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+
+  <p id="errorMsg" class="text-red-600 text-center mt-4 hidden">Username atau password salah</p>
+</div>
+
 <script>
-const SPREADSHEET_ID = '152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U';
-const SHEET_NAME = 'user';
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+const SPREADSHEET_ID = "152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U";
+const SHEET_NAME = "user";
+const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-const loginForm = document.getElementById('loginForm');
-const usernameInput = document.getElementById('username');
-const passwordInput = document.getElementById('password');
-const msgEl = document.getElementById('msg');
-const loggedInEl = document.getElementById('loggedIn');
-const userLabel = document.getElementById('userLabel');
-const btnLogout = document.getElementById('btnLogout');
-const btnGo = document.getElementById('btnGo');
-const btnSubmit = document.getElementById('btnSubmit');
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const errorMsg = document.getElementById("errorMsg");
 
-let userMap = {};
-let isLoaded = false;
-
-async function loadUsers() {
   try {
-    const res = await fetch(SHEET_URL);
+    const res = await fetch(url);
     const text = await res.text();
-    const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+    const jsonStr = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
     const data = JSON.parse(jsonStr);
-    const rows = data.table.rows || [];
-    userMap = {};
-    rows.forEach(r => {
-      const cells = r.c || [];
-      const u = cells[0] && cells[0].v ? String(cells[0].v).trim() : '';
-      const p = cells[1] && cells[1].v ? String(cells[1].v).trim() : '';
-      if (u) userMap[u] = p;
-    });
-    isLoaded = true;
-    checkSession();
-  } catch (err) {
-    console.error('Gagal memuat user sheet:', err);
-    msgEl.textContent = 'Gagal memuat data user.';
-  }
-}
 
-function validateLogin(username, password) {
-  if (!isLoaded) {
-    msgEl.textContent = 'Data pengguna belum dimuat.';
-    return false;
-  }
-  username = username.trim();
-  if (!username) {
-    msgEl.textContent = 'Masukkan username.';
-    return false;
-  }
-  if (!(username in userMap)) {
-    msgEl.textContent = 'Username tidak ditemukan.';
-    return false;
-  }
-  if (userMap[username] !== password) {
-    msgEl.textContent = 'Password salah.';
-    return false;
-  }
-  return true;
-}
+    const rows = data.table.rows.map(r => r.c.map(c => c ? c.v : ""));
 
-function setSession(username) {
-  sessionStorage.setItem('loggedUser', username);
-  // langsung arahkan ke asetdikbud.html
-  window.location.href = 'asetdikbud.html';
-}
-function clearSession() {
-  sessionStorage.removeItem('loggedUser');
-  showLoggedOut();
-}
-function checkSession() {
-  const u = sessionStorage.getItem('loggedUser');
-  if (u) {
-    // jika sudah login, langsung ke asetdikbud.html
-    window.location.href = 'asetdikbud.html';
-  } else {
-    showLoggedOut();
-  }
-}
+    const user = rows.find(r => r[0] === username && r[1] === password);
 
-function showLoggedIn(username) {
-  loginForm.classList.add('hidden');
-  msgEl.textContent = '';
-  loggedInEl.classList.remove('hidden');
-  userLabel.textContent = username;
-}
-function showLoggedOut() {
-  loginForm.classList.remove('hidden');
-  loggedInEl.classList.add('hidden');
-  msgEl.textContent = '';
-}
-
-loginForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  msgEl.textContent = '';
-  btnSubmit.disabled = true;
-  const u = usernameInput.value;
-  const p = passwordInput.value;
-  setTimeout(() => {
-    if (validateLogin(u, p)) {
-      setSession(u);
+    if (user) {
+      localStorage.setItem("namaSekolah", user[2] || "Pengguna");
+      window.location.href = "asetdikbud.html";
+    } else {
+      errorMsg.classList.remove("hidden");
     }
-    btnSubmit.disabled = false;
-  }, 300);
+  } catch (err) {
+    console.error(err);
+    alert("Gagal memuat data login.");
+  }
 });
-
-btnLogout.addEventListener('click', () => {
-  clearSession();
-  usernameInput.value = '';
-  passwordInput.value = '';
-});
-btnGo.addEventListener('click', () => {
-  window.location.href = 'asetdikbud.html';
-});
-
-loadUsers();
-checkSession();
 </script>
+
 </body>
 </html>
