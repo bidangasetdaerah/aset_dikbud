@@ -22,76 +22,90 @@
 </head>
 <body class="bg-gray-50 font-sans flex min-h-screen">
 
-  <!-- Navbar kiri -->
-  <nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
-    <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700">
-      Menu
-    </div>
+<script>
+// Cek login
+const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
+if (!loggedUser) {
+  window.location.href = 'index.html';
+}
+</script>
 
-    <div class="group border-b border-gray-200">
-      <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
-        <span class="font-medium text-gray-700">KIB</span>
-        <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-      </button>
-      <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
-        <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB B</a>
-        <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB C</a>
-      </div>
-    </div>
+<!-- Navbar kiri -->
+<nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
+  <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700">
+    Menu
+  </div>
 
-    <div class="group border-b border-gray-200">
-      <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
-        <span class="font-medium text-gray-700">Rekapan</span>
-        <svg id="rekapanArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-      </button>
-      <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
-        <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB B</a>
-        <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
-      </div>
-    </div>
+  <!-- Welcome -->
+  <div class="px-6 py-3 border-b border-gray-200 text-gray-700">
+    Selamat datang,<br>
+    <span class="font-bold text-blue-600" id="welcomeName"></span>
+  </div>
 
-    <!-- Tombol Logout -->
-    <button id="logoutBtn" class="mt-auto bg-red-500 text-white px-6 py-3 hover:bg-red-600">Logout</button>
+  <!-- Menu KIB -->
+  <div class="group border-b border-gray-200">
+    <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
+      <span class="font-medium text-gray-700">KIB</span>
+      <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+    </button>
+    <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
+      <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB B</a>
+      <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB C</a>
+    </div>
+  </div>
+
+  <!-- Menu Rekapan -->
+  <div class="group border-b border-gray-200">
+    <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
+      <span class="font-medium text-gray-700">Rekapan</span>
+      <svg id="rekapanArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+    </button>
+    <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
+      <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB B</a>
+      <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
+    </div>
+  </div>
+
+  <!-- Tombol logout -->
+  <button id="logoutBtn" class="mt-auto m-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+    Logout
+  </button>
+</nav>
+
+<!-- Konten utama -->
+<main class="flex-1 p-6 overflow-auto max-w-full">
+  <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Data Satuan Pendidikan</h2>
+
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 max-w-5xl mx-auto">
+    <input id="searchInput" type="text" placeholder="Cari data sekolah..." class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <select id="kecamatanFilter" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-xs">
+      <option value="">Filter Kecamatan (Semua)</option>
+    </select>
+  </div>
+
+  <div class="overflow-x-auto max-w-7xl mx-auto shadow rounded-lg bg-white">
+    <table id="dataTable" class="min-w-full table-auto border-collapse border border-gray-300">
+      <thead class="bg-blue-600 text-white">
+        <tr id="tableHeader" class="text-center"></tr>
+      </thead>
+      <tbody id="tableBody" class="divide-y divide-gray-200"></tbody>
+    </table>
+  </div>
+
+  <nav aria-label="Pagination" class="mt-6 flex justify-center">
+    <ul id="pagination" class="inline-flex space-x-1"></ul>
   </nav>
-
-  <!-- Konten utama -->
-  <main class="flex-1 p-6 overflow-auto max-w-full">
-    <h2 id="welcomeText" class="text-xl font-semibold mb-6 text-center text-gray-800"></h2>
-
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 max-w-5xl mx-auto">
-      <input id="searchInput" type="text" placeholder="Cari data sekolah..." class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-      <select id="kecamatanFilter" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-xs">
-        <option value="">Filter Kecamatan (Semua)</option>
-      </select>
-    </div>
-
-    <div class="overflow-x-auto max-w-7xl mx-auto shadow rounded-lg bg-white">
-      <table id="dataTable" class="min-w-full table-auto border-collapse border border-gray-300">
-        <thead class="bg-blue-600 text-white">
-          <tr id="tableHeader" class="text-center"></tr>
-        </thead>
-        <tbody id="tableBody" class="divide-y divide-gray-200"></tbody>
-      </table>
-    </div>
-
-    <nav aria-label="Pagination" class="mt-6 flex justify-center">
-      <ul id="pagination" class="inline-flex space-x-1"></ul>
-    </nav>
-  </main>
+</main>
 
 <script>
-if (!localStorage.getItem("namaSekolah")) {
-  window.location.href = "index.html";
-}
+document.getElementById('welcomeName').textContent = loggedUser.nama;
 
-document.getElementById("welcomeText").textContent =
-  "Selamat datang " + localStorage.getItem("namaSekolah");
-
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("namaSekolah");
-  window.location.href = "index.html";
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem('loggedUser');
+  window.location.href = 'index.html';
 });
 
+// Fungsi toggle dropdown
 function toggleDropdown(btnId, dropdownId, arrowId) {
   const btn = document.getElementById(btnId);
   const dropdown = document.getElementById(dropdownId);
@@ -108,7 +122,6 @@ function toggleDropdown(btnId, dropdownId, arrowId) {
     }
   });
 }
-
 toggleDropdown('kibBtn', 'kibDropdown', 'kibArrow');
 toggleDropdown('rekapanBtn', 'rekapanDropdown', 'rekapanArrow');
 
@@ -227,9 +240,7 @@ function renderPagination(currentPage) {
     const btn = document.createElement('button');
     btn.textContent = label || page;
     btn.disabled = disabled;
-    btn.className = `px-3 py-1 rounded ${
-      active ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100'
-    } disabled:opacity-50 disabled:cursor-not-allowed transition`;
+    btn.className = `px-3 py-1 rounded ${active ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100'} disabled:opacity-50 disabled:cursor-not-allowed transition`;
     btn.addEventListener('click', () => {
       if (!disabled) renderTablePage(page);
     });
@@ -275,12 +286,8 @@ function applyFilters() {
 }
 
 function isValidUrl(str) {
-  try {
-    new URL(str);
-    return true;
-  } catch {
-    return false;
-  }
+  try { new URL(str); return true; }
+  catch { return false; }
 }
 
 document.getElementById('searchInput').addEventListener('input', applyFilters);
