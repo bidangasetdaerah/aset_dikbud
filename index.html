@@ -1,77 +1,109 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Login - Aset Dinas Pendidikan</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Data KIB Aset Dinas Pendidikan dan Kebudayaan</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+  /* Custom icon styles agar ukuran dan posisi bagus */
+  .eye-icon, .book-icon {
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.25rem;
+  }
+  .eye-icon {
+    color: #2563eb;
+  }
+  .book-icon {
+    color: #16a34a;
+  }
+  .rotate-90 {
+    transform: rotate(90deg);
+  }
+</style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-<div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm">
-  <h2 class="text-2xl font-bold text-center mb-6 text-blue-700">Login</h2>
-  
-  <div id="errorMsg" class="hidden text-red-600 text-sm mb-4"></div>
+<body class="bg-gray-50 font-sans flex min-h-screen">
 
-  <form id="loginForm" class="space-y-4">
-    <div>
-      <label class="block text-sm font-medium">Username</label>
-      <input id="username" type="text" required class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+  <!-- Navbar kiri -->
+  <nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
+    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+      <div class="text-xl font-semibold text-blue-700" id="welcomeMsg">Loading...</div>
+      <button id="logoutBtn" class="text-sm text-red-600 hover:underline focus:outline-none">Logout</button>
     </div>
-    <div>
-      <label class="block text-sm font-medium">Password</label>
-      <input id="password" type="password" required class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+    <div class="group border-b border-gray-200">
+      <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
+        <span class="font-medium text-gray-700">KIB</span>
+        <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+      </button>
+      <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
+        <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB B</a>
+        <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB C</a>
+      </div>
     </div>
-    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
-  </form>
-</div>
+
+    <div class="group border-b border-gray-200">
+      <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
+        <span class="font-medium text-gray-700">Rekapan</span>
+        <svg id="rekapanArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+      </button>
+      <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
+        <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB B</a>
+        <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Konten utama -->
+  <main class="flex-1 p-6 overflow-auto max-w-full">
+    <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Data Satuan Pendidikan</h2>
+
+    <!-- Konten lainnya... -->
+
+  </main>
 
 <script>
-const SPREADSHEET_ID = '152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U';
-const SHEET_NAME = 'user'; // sheet berisi daftar user login
-const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
-
-let userList = [];
-
-// Ambil daftar user dari sheet
-async function loadUsers() {
-  try {
-    const res = await fetch(url);
-    const text = await res.text();
-    const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-    const data = JSON.parse(jsonStr);
-    const rows = data.table.rows;
-
-    // asumsikan kolom: username, password, nama_sekolah
-    userList = rows.map(r => ({
-      username: r.c[0] ? r.c[0].v : '',
-      password: r.c[1] ? r.c[1].v : '',
-      nama: r.c[2] ? r.c[2].v : ''
-    }));
-  } catch (err) {
-    console.error('Gagal load user:', err);
-    document.getElementById('errorMsg').textContent = 'Gagal memuat data login.';
-    document.getElementById('errorMsg').classList.remove('hidden');
-  }
-}
-
-loadUsers();
-
-document.getElementById('loginForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
-
-  const user = userList.find(u => u.username === username && u.password === password);
-
-  if (user) {
-    // simpan ke localStorage
-    localStorage.setItem('loggedUser', JSON.stringify(user));
-    window.location.href = 'asetdikbud.html';
+  // Redirect ke login jika tidak ada user login
+  const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
+  if (!loggedUser) {
+    window.location.href = 'index.html'; // ganti dengan nama file login-mu jika beda
   } else {
-    document.getElementById('errorMsg').textContent = 'Username atau password salah.';
-    document.getElementById('errorMsg').classList.remove('hidden');
+    // Tampilkan pesan selamat datang dengan nama sekolah
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    welcomeMsg.textContent = `Selamat datang, ${loggedUser.nama}!`;
   }
-});
+
+  // Logout handler
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('loggedUser');
+    window.location.href = 'index.html'; // ganti sesuai nama halaman login
+  });
+
+  // Toggle dropdown function with arrow rotation
+  function toggleDropdown(btnId, dropdownId, arrowId) {
+    const btn = document.getElementById(btnId);
+    const dropdown = document.getElementById(dropdownId);
+    const arrow = document.getElementById(arrowId);
+
+    btn.addEventListener('click', () => {
+      const isHidden = dropdown.classList.contains('hidden');
+      if (isHidden) {
+        dropdown.classList.remove('hidden');
+        arrow.classList.add('rotate-90');
+      } else {
+        dropdown.classList.add('hidden');
+        arrow.classList.remove('rotate-90');
+      }
+    });
+  }
+
+  toggleDropdown('kibBtn', 'kibDropdown', 'kibArrow');
+  toggleDropdown('rekapanBtn', 'rekapanDropdown', 'rekapanArrow');
 </script>
 </body>
 </html>
