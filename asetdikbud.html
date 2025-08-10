@@ -13,9 +13,9 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 1.5rem;
+    width: 1.5rem;  /* 24px */
     height: 1.5rem;
-    font-size: 1.25rem;
+    font-size: 1.25rem; /* lebih besar */
   }
   .eye-icon {
     color: #2563eb; /* blue-600 */
@@ -23,17 +23,9 @@
   .book-icon {
     color: #16a34a; /* green-600 */
   }
+  /* Dropdown arrow rotation */
   .rotate-90 {
     transform: rotate(90deg);
-  }
-
-  /* Animasi kedip halus (fade in out) */
-  @keyframes blinkFade {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-  #welcomeMsg.blink {
-    animation: blinkFade 2s infinite;
   }
 </style>
 </head>
@@ -43,19 +35,16 @@
   <nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
     <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700 flex justify-between items-center">
       <span>Menu</span>
-      <button id="logoutBtn" class="text-red-600 hover:text-red-800 font-semibold">Logout</button>
+      <button id="logoutBtn" class="text-red-600 font-semibold hover:text-red-800">Logout</button>
     </div>
-
-    <!-- Welcome message -->
-    <div id="welcomeMsg" class="px-6 py-4 border-b border-gray-200 text-center font-medium text-gray-700"></div>
 
     <!-- Menu item dengan dropdown KIB -->
     <div class="group border-b border-gray-200">
-      <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none" type="button" aria-expanded="false" aria-controls="kibDropdown">
+      <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
         <span class="font-medium text-gray-700">KIB</span>
         <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
       </button>
-      <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200" role="region" aria-label="Dropdown KIB">
+      <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB B</a>
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB C</a>
       </div>
@@ -63,11 +52,11 @@
 
     <!-- Menu item dengan dropdown Rekapan -->
     <div class="group border-b border-gray-200">
-      <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none" type="button" aria-expanded="false" aria-controls="rekapanDropdown">
+      <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
         <span class="font-medium text-gray-700">Rekapan</span>
         <svg id="rekapanArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
       </button>
-      <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200" role="region" aria-label="Dropdown Rekapan">
+      <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB B</a>
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
       </div>
@@ -76,7 +65,7 @@
 
   <!-- Konten utama -->
   <main class="flex-1 p-6 overflow-auto max-w-full">
-    <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Data Satuan Pendidikan</h2>
+    <h2 id="welcomeMsg" class="text-2xl font-semibold mb-6 text-center text-gray-800"></h2>
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 max-w-5xl mx-auto">
       <input id="searchInput" type="text" placeholder="Cari data sekolah..." class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -100,31 +89,22 @@
   </main>
 
 <script>
-  // Logout button handler
+  // Logout handler
   document.getElementById('logoutBtn').addEventListener('click', () => {
     localStorage.removeItem('loggedUser');
-    window.location.href = 'asetdikbud.html';
+    window.location.href = 'login.html';
   });
 
-  // Show welcome message with nama sekolah from localStorage, with blinking effect
-  function showWelcome() {
-    const userStr = localStorage.getItem('loggedUser');
-    if (!userStr) {
-      // Jika belum login, redirect ke login
-      window.location.href = 'asetdikbud.html';
-      return;
-    }
-    const user = JSON.parse(userStr);
-    const welcomeMsg = document.getElementById('welcomeMsg');
-    welcomeMsg.textContent = `Selamat datang, ${user.nama}`;
-    // Tambahkan class blink untuk animasi kedip
-    welcomeMsg.classList.add('blink');
-
-    // Jika mau hilangkan animasi kedip setelah 6 detik, bisa pakai ini (opsional)
-    // setTimeout(() => welcomeMsg.classList.remove('blink'), 6000);
+  // Tampilkan nama sekolah saat login
+  const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
+  if (!loggedUser) {
+    // jika belum login, redirect ke login
+    window.location.href = 'login.html';
+  } else {
+    document.getElementById('welcomeMsg').textContent = `Selamat datang, ${loggedUser.nama}`;
   }
 
-  // Dropdown toggle function with aria-expanded toggle
+  // Toggle dropdown function with arrow rotation
   function toggleDropdown(btnId, dropdownId, arrowId) {
     const btn = document.getElementById(btnId);
     const dropdown = document.getElementById(dropdownId);
@@ -135,11 +115,9 @@
       if (isHidden) {
         dropdown.classList.remove('hidden');
         arrow.classList.add('rotate-90');
-        btn.setAttribute('aria-expanded', 'true');
       } else {
         dropdown.classList.add('hidden');
         arrow.classList.remove('rotate-90');
-        btn.setAttribute('aria-expanded', 'false');
       }
     });
   }
@@ -155,8 +133,8 @@
   const rowsPerPage = 50;
   let allData = [];
   let filteredData = [];
-  let kibColIndex = -1;
-  let dokBarcodeColIndex = -1;
+  let kibColIndex = -1;      // index kolom "KIB Peralatan dan Mesin"
+  let dokBarcodeColIndex = -1; // index kolom "Dokumen Barcode"
   const kecamatanColIndex = 6;
 
   async function loadSheet() {
@@ -172,8 +150,10 @@
       allData = rows.map(r => r.c.map(cell => (cell ? cell.v : '')));
       filteredData = [...allData];
 
-      kibColIndex = cols.findIndex(c => c && c.toLowerCase().includes('kib peralatan dan mesin'));
-      dokBarcodeColIndex = cols.findIndex(c => c && c.toLowerCase().includes('dokumen barcode'));
+      // Cari index kolom "KIB Peralatan dan Mesin"
+      kibColIndex = cols.findIndex(c => c.toLowerCase().includes('kib peralatan dan mesin'));
+      // Cari index kolom "Dokumen Barcode"
+      dokBarcodeColIndex = cols.findIndex(c => c.toLowerCase().includes('dokumen barcode'));
 
       renderTableHeader(cols);
       renderKecamatanFilter();
@@ -190,7 +170,7 @@
     headerRow.innerHTML = '';
     cols.forEach(col => {
       const th = document.createElement('th');
-      th.textContent = col || '';
+      th.textContent = col;
       th.className = 'px-4 py-3 border border-blue-700 font-semibold text-sm';
       headerRow.appendChild(th);
     });
@@ -212,7 +192,7 @@
         const td = document.createElement('td');
         td.className = 'px-4 py-2 border border-gray-300 align-middle';
 
-        if (idx === kibColIndex && kibColIndex !== -1) {
+        if (idx === kibColIndex) {
           td.classList.add('text-center');
           if (cell && isValidUrl(cell)) {
             const link = document.createElement('a');
@@ -220,17 +200,13 @@
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
             link.title = 'Lihat detail KIB Peralatan dan Mesin';
-
-            const icon = document.createElement('span');
-            icon.className = 'eye-icon';
-            icon.textContent = '👁️';
-            link.appendChild(icon);
-
+            link.innerHTML = '&#128065;'; // icon mata
+            link.classList.add('eye-icon');
             td.appendChild(link);
-          } else {
-            td.textContent = '-';
+            tr.appendChild(td);
+            return;
           }
-        } else if (idx === dokBarcodeColIndex && dokBarcodeColIndex !== -1) {
+        } else if (idx === dokBarcodeColIndex) {
           td.classList.add('text-center');
           if (cell && isValidUrl(cell)) {
             const link = document.createElement('a');
@@ -238,21 +214,15 @@
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
             link.title = 'Lihat Dokumen Barcode';
-
-            const icon = document.createElement('span');
-            icon.className = 'book-icon';
-            icon.textContent = '📖';
-            link.appendChild(icon);
-
+            link.innerHTML = '&#128214;'; // icon buku
+            link.classList.add('book-icon');
             td.appendChild(link);
-          } else {
-            td.textContent = '-';
+            tr.appendChild(td);
+            return;
           }
-        } else {
-          td.classList.add('text-left');
-          td.textContent = cell;
         }
 
+        td.textContent = cell || '';
         tr.appendChild(td);
       });
 
@@ -262,42 +232,6 @@
     renderPagination(page);
   }
 
-  function renderPagination(currentPage) {
-    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-
-    function createPageItem(page, label = null, disabled = false, active = false) {
-      const li = document.createElement('li');
-      const btn = document.createElement('button');
-      btn.textContent = label || page;
-      btn.disabled = disabled;
-      btn.className = `px-3 py-1 rounded ${
-        active ? 'bg-blue-600 text-white' : 'hover:bg-blue-200'
-      }`;
-      btn.addEventListener('click', () => {
-        renderTablePage(page);
-      });
-      li.appendChild(btn);
-      return li;
-    }
-
-    // Previous button
-    pagination.appendChild(createPageItem(currentPage - 1, '‹', currentPage === 1, false));
-
-    // Page numbers (max 5 pages visible)
-    let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, currentPage + 2);
-
-    for (let i = startPage; i <= endPage; i++) {
-      pagination.appendChild(createPageItem(i, null, false, i === currentPage));
-    }
-
-    // Next button
-    pagination.appendChild(createPageItem(currentPage + 1, '›', currentPage === totalPages, false));
-  }
-
-  // Validasi URL sederhana
   function isValidUrl(str) {
     try {
       new URL(str);
@@ -307,49 +241,104 @@
     }
   }
 
-  // Render dropdown filter Kecamatan dari data unik
+  // Filter kecamatan untuk dropdown berdasarkan data
   function renderKecamatanFilter() {
     const select = document.getElementById('kecamatanFilter');
-    const kecamatanSet = new Set(allData.map(r => r[kecamatanColIndex]).filter(x => x));
-    const kecamatanArray = Array.from(kecamatanSet).sort();
+    // Ambil list kecamatan unik dari data
+    const kecamatanList = [...new Set(allData.map(row => row[kecamatanColIndex]).filter(Boolean))].sort();
 
-    kecamatanArray.forEach(kec => {
+    kecamatanList.forEach(kec => {
       const option = document.createElement('option');
       option.value = kec;
       option.textContent = kec;
       select.appendChild(option);
     });
 
+    // Event change filter
     select.addEventListener('change', () => {
-      const val = select.value.trim();
-      if (!val) {
-        filteredData = [...allData];
-      } else {
-        filteredData = allData.filter(r => r[kecamatanColIndex] === val);
-      }
-      // Reset pencarian dan render halaman pertama
-      document.getElementById('searchInput').value = '';
-      renderTablePage(1);
+      applyFilters();
     });
   }
 
-  // Cari nama sekolah dari input search
-  document.getElementById('searchInput').addEventListener('input', e => {
-    const keyword = e.target.value.toLowerCase().trim();
-
-    if (!keyword) {
-      filteredData = [...allData];
-    } else {
-      // kolom nama sekolah di index 2 (sesuaikan jika beda)
-      filteredData = allData.filter(r => r[2] && r[2].toLowerCase().includes(keyword));
-    }
-    // reset filter kecamatan juga ke semua
-    document.getElementById('kecamatanFilter').value = '';
-    renderTablePage(1);
+  // Event search input
+  document.getElementById('searchInput').addEventListener('input', () => {
+    applyFilters();
   });
 
-  // Inisialisasi
-  showWelcome();
+  function applyFilters() {
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const selectedKecamatan = document.getElementById('kecamatanFilter').value;
+
+    filteredData = allData.filter(row => {
+      const namaSekolah = row[1] ? row[1].toLowerCase() : ''; // Asumsikan kolom ke-2 adalah nama sekolah
+      const kecamatan = row[kecamatanColIndex] || '';
+
+      const matchSearch = namaSekolah.includes(searchText);
+      const matchKecamatan = selectedKecamatan ? kecamatan === selectedKecamatan : true;
+
+      return matchSearch && matchKecamatan;
+    });
+
+    renderTablePage(1);
+  }
+
+  // Pagination render dan click
+  function renderPagination(currentPage) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+    if (totalPages <= 1) return;
+
+    // Fungsi untuk membuat tombol page
+    function createPageButton(page) {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.textContent = page;
+      btn.className = 'px-3 py-1 rounded hover:bg-blue-200 focus:outline-none ' + (page === currentPage ? 'bg-blue-600 text-white' : 'bg-white text-blue-600');
+      btn.addEventListener('click', () => renderTablePage(page));
+      li.appendChild(btn);
+      return li;
+    }
+
+    // Tambah tombol prev
+    if (currentPage > 1) {
+      const liPrev = document.createElement('li');
+      const btnPrev = document.createElement('button');
+      btnPrev.textContent = 'Prev';
+      btnPrev.className = 'px-3 py-1 rounded hover:bg-blue-200 focus:outline-none bg-white text-blue-600';
+      btnPrev.addEventListener('click', () => renderTablePage(currentPage - 1));
+      liPrev.appendChild(btnPrev);
+      pagination.appendChild(liPrev);
+    }
+
+    // Jika banyak halaman, batasi tampilan tombol page agar tidak terlalu banyak
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, currentPage + 2);
+
+    if (currentPage <= 3) {
+      endPage = Math.min(5, totalPages);
+    }
+    if (currentPage > totalPages - 3) {
+      startPage = Math.max(1, totalPages - 4);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.appendChild(createPageButton(i));
+    }
+
+    // Tambah tombol next
+    if (currentPage < totalPages) {
+      const liNext = document.createElement('li');
+      const btnNext = document.createElement('button');
+      btnNext.textContent = 'Next';
+      btnNext.className = 'px-3 py-1 rounded hover:bg-blue-200 focus:outline-none bg-white text-blue-600';
+      btnNext.addEventListener('click', () => renderTablePage(currentPage + 1));
+      liNext.appendChild(btnNext);
+      pagination.appendChild(liNext);
+    }
+  }
+
   loadSheet();
 </script>
 
