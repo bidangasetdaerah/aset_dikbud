@@ -4,29 +4,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Data KIB Aset Dinas Pendidikan dan Kebudayaan</title>
-<!-- Tailwind CSS CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  /* Custom icon styles agar ukuran dan posisi bagus */
   .eye-icon, .book-icon {
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 1.5rem;  /* 24px */
+    width: 1.5rem;
     height: 1.5rem;
-    font-size: 1.25rem; /* lebih besar */
+    font-size: 1.25rem;
   }
-  .eye-icon {
-    color: #2563eb; /* blue-600 */
-  }
-  .book-icon {
-    color: #16a34a; /* green-600 */
-  }
-  /* Dropdown arrow rotation */
-  .rotate-90 {
-    transform: rotate(90deg);
-  }
+  .eye-icon { color: #2563eb; }
+  .book-icon { color: #16a34a; }
+  .rotate-90 { transform: rotate(90deg); }
 </style>
 </head>
 <body class="bg-gray-50 font-sans flex min-h-screen">
@@ -37,7 +28,6 @@
       Menu
     </div>
 
-    <!-- Menu item dengan dropdown KIB -->
     <div class="group border-b border-gray-200">
       <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
         <span class="font-medium text-gray-700">KIB</span>
@@ -49,7 +39,6 @@
       </div>
     </div>
 
-    <!-- Menu item dengan dropdown Rekapan -->
     <div class="group border-b border-gray-200">
       <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
         <span class="font-medium text-gray-700">Rekapan</span>
@@ -60,11 +49,14 @@
         <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
       </div>
     </div>
+
+    <!-- Tombol Logout -->
+    <button id="logoutBtn" class="mt-auto bg-red-500 text-white px-6 py-3 hover:bg-red-600">Logout</button>
   </nav>
 
   <!-- Konten utama -->
   <main class="flex-1 p-6 overflow-auto max-w-full">
-    <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Data Satuan Pendidikan</h2>
+    <h2 id="welcomeText" class="text-xl font-semibold mb-6 text-center text-gray-800"></h2>
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 max-w-5xl mx-auto">
       <input id="searchInput" type="text" placeholder="Cari data sekolah..." class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -88,205 +80,213 @@
   </main>
 
 <script>
-  // Toggle dropdown function with arrow rotation
-  function toggleDropdown(btnId, dropdownId, arrowId) {
-    const btn = document.getElementById(btnId);
-    const dropdown = document.getElementById(dropdownId);
-    const arrow = document.getElementById(arrowId);
+if (!localStorage.getItem("namaSekolah")) {
+  window.location.href = "index.html";
+}
 
-    btn.addEventListener('click', () => {
-      const isHidden = dropdown.classList.contains('hidden');
-      if (isHidden) {
-        dropdown.classList.remove('hidden');
-        arrow.classList.add('rotate-90');
-      } else {
-        dropdown.classList.add('hidden');
-        arrow.classList.remove('rotate-90');
-      }
-    });
-  }
+document.getElementById("welcomeText").textContent =
+  "Selamat datang " + localStorage.getItem("namaSekolah");
 
-  toggleDropdown('kibBtn', 'kibDropdown', 'kibArrow');
-  toggleDropdown('rekapanBtn', 'rekapanDropdown', 'rekapanArrow');
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("namaSekolah");
+  window.location.href = "index.html";
+});
 
-  const SPREADSHEET_ID = '152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U';
-  const SHEET_NAME = 'sekolah';
+function toggleDropdown(btnId, dropdownId, arrowId) {
+  const btn = document.getElementById(btnId);
+  const dropdown = document.getElementById(dropdownId);
+  const arrow = document.getElementById(arrowId);
 
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
-
-  const rowsPerPage = 50;
-  let allData = [];
-  let filteredData = [];
-  let kibColIndex = -1;      // index kolom "KIB Peralatan dan Mesin"
-  let dokBarcodeColIndex = -1; // index kolom "Dokumen Barcode"
-  const kecamatanColIndex = 6;
-
-  async function loadSheet() {
-    try {
-      const res = await fetch(url);
-      const text = await res.text();
-      const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-      const data = JSON.parse(jsonStr);
-
-      const cols = data.table.cols.map(c => c.label);
-      const rows = data.table.rows;
-
-      allData = rows.map(r => r.c.map(cell => (cell ? cell.v : '')));
-      filteredData = [...allData];
-
-      // Cari index kolom "KIB Peralatan dan Mesin"
-      kibColIndex = cols.findIndex(c => c.toLowerCase().includes('kib peralatan dan mesin'));
-      // Cari index kolom "Dokumen Barcode"
-      dokBarcodeColIndex = cols.findIndex(c => c.toLowerCase().includes('dokumen barcode'));
-
-      renderTableHeader(cols);
-      renderKecamatanFilter();
-      renderTablePage(1);
-
-    } catch (error) {
-      console.error('Error loading sheet:', error);
-      document.body.insertAdjacentHTML('beforeend', `<p class="text-red-600 text-center mt-4">Gagal memuat data: ${error.message}</p>`);
+  btn.addEventListener('click', () => {
+    const isHidden = dropdown.classList.contains('hidden');
+    if (isHidden) {
+      dropdown.classList.remove('hidden');
+      arrow.classList.add('rotate-90');
+    } else {
+      dropdown.classList.add('hidden');
+      arrow.classList.remove('rotate-90');
     }
-  }
+  });
+}
 
-  function renderTableHeader(cols) {
-    const headerRow = document.getElementById('tableHeader');
-    headerRow.innerHTML = '';
-    cols.forEach(col => {
-      const th = document.createElement('th');
-      th.textContent = col;
-      th.className = 'px-4 py-3 border border-blue-700 font-semibold text-sm';
-      headerRow.appendChild(th);
-    });
-  }
+toggleDropdown('kibBtn', 'kibDropdown', 'kibArrow');
+toggleDropdown('rekapanBtn', 'rekapanDropdown', 'rekapanArrow');
 
-  function renderTablePage(page) {
-    const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = '';
+const SPREADSHEET_ID = '152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U';
+const SHEET_NAME = 'sekolah';
+const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    const pageData = filteredData.slice(start, end);
+const rowsPerPage = 50;
+let allData = [];
+let filteredData = [];
+let kibColIndex = -1;
+let dokBarcodeColIndex = -1;
+const kecamatanColIndex = 6;
 
-    pageData.forEach(row => {
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-gray-100 transition';
+async function loadSheet() {
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+    const data = JSON.parse(jsonStr);
 
-      row.forEach((cell, idx) => {
-        const td = document.createElement('td');
-        td.className = 'px-4 py-2 border border-gray-300 align-middle';
+    const cols = data.table.cols.map(c => c.label);
+    const rows = data.table.rows;
 
-        if (idx === kibColIndex) {
-          td.classList.add('text-center');
-          if (cell && isValidUrl(cell)) {
-            const link = document.createElement('a');
-            link.href = cell;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.title = 'Lihat detail KIB Peralatan dan Mesin';
-            link.innerHTML = '&#128065;'; // icon mata
-            link.classList.add('eye-icon');
-            td.appendChild(link);
-            tr.appendChild(td);
-            return;
-          }
-        } else if (idx === dokBarcodeColIndex) {
-          td.classList.add('text-center');
-          if (cell && isValidUrl(cell)) {
-            const link = document.createElement('a');
-            link.href = cell;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.title = 'Lihat Dokumen Barcode';
-            link.innerHTML = '&#128214;'; // icon buku
-            link.classList.add('book-icon');
-            td.appendChild(link);
-            tr.appendChild(td);
-            return;
-          }
-        } else {
-          td.classList.add('text-left');
-        }
+    allData = rows.map(r => r.c.map(cell => (cell ? cell.v : '')));
+    filteredData = [...allData];
 
-        td.textContent = cell;
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
+    kibColIndex = cols.findIndex(c => c.toLowerCase().includes('kib peralatan dan mesin'));
+    dokBarcodeColIndex = cols.findIndex(c => c.toLowerCase().includes('dokumen barcode'));
 
-    renderPagination(page);
-  }
-
-  function renderPagination(currentPage) {
-    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-
-    function createPageItem(page, label = null, disabled = false, active = false) {
-      const li = document.createElement('li');
-      const btn = document.createElement('button');
-      btn.textContent = label || page;
-      btn.disabled = disabled;
-      btn.className = `px-3 py-1 rounded ${
-        active ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100'
-      } disabled:opacity-50 disabled:cursor-not-allowed transition`;
-      btn.addEventListener('click', () => {
-        if (!disabled) renderTablePage(page);
-      });
-      li.appendChild(btn);
-      return li;
-    }
-
-    pagination.appendChild(createPageItem(currentPage - 1, '« Prev', currentPage === 1));
-
-    for (let i = 1; i <= totalPages; i++) {
-      pagination.appendChild(createPageItem(i, null, false, i === currentPage));
-    }
-
-    pagination.appendChild(createPageItem(currentPage + 1, 'Next »', currentPage === totalPages));
-  }
-
-  function renderKecamatanFilter() {
-    const kecamatanFilter = document.getElementById('kecamatanFilter');
-
-    const kecamatans = [...new Set(allData.map(row => row[kecamatanColIndex]))]
-      .filter(k => k && k.trim() !== '' && !k.toLowerCase().includes('negeri'))
-      .sort();
-
-    kecamatans.forEach(kec => {
-      const option = document.createElement('option');
-      option.value = kec;
-      option.textContent = kec;
-      kecamatanFilter.appendChild(option);
-    });
-  }
-
-  function applyFilters() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const kecamatanFilter = document.getElementById('kecamatanFilter').value;
-
-    filteredData = allData.filter(row => {
-      const matchesSearch = searchTerm === '' || row.some(cell => String(cell).toLowerCase().includes(searchTerm));
-      const matchesKecamatan = kecamatanFilter ? row[kecamatanColIndex] === kecamatanFilter : true;
-      return matchesSearch && matchesKecamatan;
-    });
-
+    renderTableHeader(cols);
+    renderKecamatanFilter();
     renderTablePage(1);
+
+  } catch (error) {
+    console.error('Error loading sheet:', error);
+    document.body.insertAdjacentHTML('beforeend', `<p class="text-red-600 text-center mt-4">Gagal memuat data: ${error.message}</p>`);
+  }
+}
+
+function renderTableHeader(cols) {
+  const headerRow = document.getElementById('tableHeader');
+  headerRow.innerHTML = '';
+  cols.forEach(col => {
+    const th = document.createElement('th');
+    th.textContent = col;
+    th.className = 'px-4 py-3 border border-blue-700 font-semibold text-sm';
+    headerRow.appendChild(th);
+  });
+}
+
+function renderTablePage(page) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  const start = (page - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageData = filteredData.slice(start, end);
+
+  pageData.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-100 transition';
+
+    row.forEach((cell, idx) => {
+      const td = document.createElement('td');
+      td.className = 'px-4 py-2 border border-gray-300 align-middle';
+
+      if (idx === kibColIndex) {
+        td.classList.add('text-center');
+        if (cell && isValidUrl(cell)) {
+          const link = document.createElement('a');
+          link.href = cell;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.title = 'Lihat detail KIB Peralatan dan Mesin';
+          link.innerHTML = '&#128065;';
+          link.classList.add('eye-icon');
+          td.appendChild(link);
+          tr.appendChild(td);
+          return;
+        }
+      } else if (idx === dokBarcodeColIndex) {
+        td.classList.add('text-center');
+        if (cell && isValidUrl(cell)) {
+          const link = document.createElement('a');
+          link.href = cell;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.title = 'Lihat Dokumen Barcode';
+          link.innerHTML = '&#128214;';
+          link.classList.add('book-icon');
+          td.appendChild(link);
+          tr.appendChild(td);
+          return;
+        }
+      } else {
+        td.classList.add('text-left');
+      }
+
+      td.textContent = cell;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  renderPagination(page);
+}
+
+function renderPagination(currentPage) {
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const pagination = document.getElementById('pagination');
+  pagination.innerHTML = '';
+
+  function createPageItem(page, label = null, disabled = false, active = false) {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.textContent = label || page;
+    btn.disabled = disabled;
+    btn.className = `px-3 py-1 rounded ${
+      active ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100'
+    } disabled:opacity-50 disabled:cursor-not-allowed transition`;
+    btn.addEventListener('click', () => {
+      if (!disabled) renderTablePage(page);
+    });
+    li.appendChild(btn);
+    return li;
   }
 
-  function isValidUrl(str) {
-    try {
-      new URL(str);
-      return true;
-    } catch {
-      return false;
-    }
+  pagination.appendChild(createPageItem(currentPage - 1, '« Prev', currentPage === 1));
+
+  for (let i = 1; i <= totalPages; i++) {
+    pagination.appendChild(createPageItem(i, null, false, i === currentPage));
   }
 
-  document.getElementById('searchInput').addEventListener('input', applyFilters);
-  document.getElementById('kecamatanFilter').addEventListener('change', applyFilters);
+  pagination.appendChild(createPageItem(currentPage + 1, 'Next »', currentPage === totalPages));
+}
 
-  loadSheet();
+function renderKecamatanFilter() {
+  const kecamatanFilter = document.getElementById('kecamatanFilter');
+
+  const kecamatans = [...new Set(allData.map(row => row[kecamatanColIndex]))]
+    .filter(k => k && k.trim() !== '' && !k.toLowerCase().includes('negeri'))
+    .sort();
+
+  kecamatans.forEach(kec => {
+    const option = document.createElement('option');
+    option.value = kec;
+    option.textContent = kec;
+    kecamatanFilter.appendChild(option);
+  });
+}
+
+function applyFilters() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const kecamatanFilter = document.getElementById('kecamatanFilter').value;
+
+  filteredData = allData.filter(row => {
+    const matchesSearch = searchTerm === '' || row.some(cell => String(cell).toLowerCase().includes(searchTerm));
+    const matchesKecamatan = kecamatanFilter ? row[kecamatanColIndex] === kecamatanFilter : true;
+    return matchesSearch && matchesKecamatan;
+  });
+
+  renderTablePage(1);
+}
+
+function isValidUrl(str) {
+  try {
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+document.getElementById('kecamatanFilter').addEventListener('change', applyFilters);
+
+loadSheet();
 </script>
 </body>
 </html>
