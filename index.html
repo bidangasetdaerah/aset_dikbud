@@ -4,38 +4,28 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Data KIB Aset Dinas Pendidikan dan Kebudayaan</title>
-<!-- Tailwind CSS CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  /* Custom icon styles agar ukuran dan posisi bagus */
   .eye-icon, .book-icon {
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 1.5rem;  /* 24px */
+    width: 1.5rem;
     height: 1.5rem;
-    font-size: 1.25rem; /* lebih besar */
+    font-size: 1.25rem;
   }
-  .eye-icon {
-    color: #2563eb; /* blue-600 */
-  }
-  .book-icon {
-    color: #16a34a; /* green-600 */
-  }
-  /* Dropdown arrow rotation */
-  .rotate-90 {
-    transform: rotate(90deg);
-  }
+  .eye-icon { color: #2563eb; }
+  .book-icon { color: #16a34a; }
+  .rotate-90 { transform: rotate(90deg); }
 </style>
 </head>
 <body class="bg-gray-50 font-sans flex min-h-screen">
 
   <!-- Navbar kiri -->
   <nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
-    <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700 flex justify-between items-center">
-      <span>Menu</span>
-      <button id="logoutBtn" class="text-red-600 font-semibold hover:text-red-800">Logout</button>
+    <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700">
+      Menu
     </div>
 
     <!-- Menu item dengan dropdown KIB -->
@@ -65,8 +55,6 @@
 
   <!-- Konten utama -->
   <main class="flex-1 p-6 overflow-auto max-w-full">
-    <h2 id="welcomeMsg" class="text-2xl font-semibold mb-6 text-center text-gray-800"></h2>
-
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 max-w-5xl mx-auto">
       <input id="searchInput" type="text" placeholder="Cari data sekolah..." class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
       <select id="kecamatanFilter" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-xs">
@@ -89,22 +77,6 @@
   </main>
 
 <script>
-  // Logout handler
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem('loggedUser');
-    window.location.href = 'login.html';
-  });
-
-  // Tampilkan nama sekolah saat login
-  const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
-  if (!loggedUser) {
-    // jika belum login, redirect ke login
-    window.location.href = 'login.html';
-  } else {
-    document.getElementById('welcomeMsg').textContent = `Selamat datang, ${loggedUser.nama}`;
-  }
-
-  // Toggle dropdown function with arrow rotation
   function toggleDropdown(btnId, dropdownId, arrowId) {
     const btn = document.getElementById(btnId);
     const dropdown = document.getElementById(dropdownId);
@@ -133,8 +105,8 @@
   const rowsPerPage = 50;
   let allData = [];
   let filteredData = [];
-  let kibColIndex = -1;      // index kolom "KIB Peralatan dan Mesin"
-  let dokBarcodeColIndex = -1; // index kolom "Dokumen Barcode"
+  let kibColIndex = -1;
+  let dokBarcodeColIndex = -1;
   const kecamatanColIndex = 6;
 
   async function loadSheet() {
@@ -150,9 +122,7 @@
       allData = rows.map(r => r.c.map(cell => (cell ? cell.v : '')));
       filteredData = [...allData];
 
-      // Cari index kolom "KIB Peralatan dan Mesin"
       kibColIndex = cols.findIndex(c => c.toLowerCase().includes('kib peralatan dan mesin'));
-      // Cari index kolom "Dokumen Barcode"
       dokBarcodeColIndex = cols.findIndex(c => c.toLowerCase().includes('dokumen barcode'));
 
       renderTableHeader(cols);
@@ -200,7 +170,7 @@
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
             link.title = 'Lihat detail KIB Peralatan dan Mesin';
-            link.innerHTML = '&#128065;'; // icon mata
+            link.innerHTML = '&#128065;';
             link.classList.add('eye-icon');
             td.appendChild(link);
             tr.appendChild(td);
@@ -214,7 +184,7 @@
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
             link.title = 'Lihat Dokumen Barcode';
-            link.innerHTML = '&#128214;'; // icon buku
+            link.innerHTML = '&#128214;';
             link.classList.add('book-icon');
             td.appendChild(link);
             tr.appendChild(td);
@@ -241,10 +211,8 @@
     }
   }
 
-  // Filter kecamatan untuk dropdown berdasarkan data
   function renderKecamatanFilter() {
     const select = document.getElementById('kecamatanFilter');
-    // Ambil list kecamatan unik dari data
     const kecamatanList = [...new Set(allData.map(row => row[kecamatanColIndex]).filter(Boolean))].sort();
 
     kecamatanList.forEach(kec => {
@@ -254,13 +222,11 @@
       select.appendChild(option);
     });
 
-    // Event change filter
     select.addEventListener('change', () => {
       applyFilters();
     });
   }
 
-  // Event search input
   document.getElementById('searchInput').addEventListener('input', () => {
     applyFilters();
   });
@@ -270,7 +236,7 @@
     const selectedKecamatan = document.getElementById('kecamatanFilter').value;
 
     filteredData = allData.filter(row => {
-      const namaSekolah = row[1] ? row[1].toLowerCase() : ''; // Asumsikan kolom ke-2 adalah nama sekolah
+      const namaSekolah = row[1] ? row[1].toLowerCase() : '';
       const kecamatan = row[kecamatanColIndex] || '';
 
       const matchSearch = namaSekolah.includes(searchText);
@@ -282,7 +248,6 @@
     renderTablePage(1);
   }
 
-  // Pagination render dan click
   function renderPagination(currentPage) {
     const pagination = document.getElementById('pagination');
     pagination.innerHTML = '';
@@ -290,7 +255,6 @@
     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
     if (totalPages <= 1) return;
 
-    // Fungsi untuk membuat tombol page
     function createPageButton(page) {
       const li = document.createElement('li');
       const btn = document.createElement('button');
@@ -301,7 +265,6 @@
       return li;
     }
 
-    // Tambah tombol prev
     if (currentPage > 1) {
       const liPrev = document.createElement('li');
       const btnPrev = document.createElement('button');
@@ -312,7 +275,6 @@
       pagination.appendChild(liPrev);
     }
 
-    // Jika banyak halaman, batasi tampilan tombol page agar tidak terlalu banyak
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, currentPage + 2);
 
@@ -327,7 +289,6 @@
       pagination.appendChild(createPageButton(i));
     }
 
-    // Tambah tombol next
     if (currentPage < totalPages) {
       const liNext = document.createElement('li');
       const btnNext = document.createElement('button');
