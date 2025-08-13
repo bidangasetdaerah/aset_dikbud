@@ -23,37 +23,27 @@
       Menu
     </div>
 
-    <!-- Menu KIB -->
-    <div class="group border-b border-gray-200">
-      <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
-        <span class="font-medium text-gray-700">KIB</span>
-        <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-      </button>
-      <div id="kibDropdown" class="hidden flex-col bg-gray-50 border-t border-gray-200">
-        <a href="inputdata.html" data-sheet="Input Data KIB B" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Input Data KIB B</a>
-        <a href="#" data-sheet="KIB C" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB C</a>
-      </div>
+      <!-- Menu KIB Dropdown -->
+  <div class="group border-b border-gray-200">
+    <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
+      <span class="font-medium text-gray-700">KIB</span>
+      <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+    <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
+      <a href="inputdata.html" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 kib-link">Input KIB B</a>
+      <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 kib-link">Input KIB C</a>
     </div>
+  </div>
 
-    <!-- Menu Rekapan -->
-    <div class="group border-b border-gray-200">
-      <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
-        <span class="font-medium text-gray-700">Rekapan</span>
-        <svg id="rekapanArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-      </button>
-      <div id="rekapanDropdown" class="hidden flex-col bg-gray-50 border-t border-gray-200">
-        <a href="#" data-sheet="Rekapan KIB B" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB B</a>
-        <a href="#" data-sheet="Rekapan KIB C" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
-      </div>
-    </div>
+  <!-- Menu Master Data -->
+  <div class="group border-b border-gray-200">
+    <a href="index.html" data-sheet="Master Data" class="px-6 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 block">Master Data</a>
+  </div>
+</nav>
 
-    <!-- Menu Master Data -->
-    <div class="group border-b border-gray-200">
-      <a href="#" data-sheet="Master Data" class="px-6 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 block">Master Data</a>
-    </div>
-  </nav>
-
-  <!-- Konten utama -->
+   <!-- Konten utama -->
   <div class="flex-1 ml-64">
     <!-- Header -->
     <header class="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/80 border-b">
