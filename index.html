@@ -6,15 +6,7 @@
 <title>Data KIB Aset Dinas Pendidikan dan Kebudayaan</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  .eye-icon, .book-icon {
-    cursor: pointer;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    font-size: 1.25rem;
-  }
+  .eye-icon, .book-icon { cursor: pointer; display: inline-flex; justify-content: center; align-items: center; width: 1.5rem; height: 1.5rem; font-size: 1.25rem; }
   .eye-icon { color: #2563eb; }
   .book-icon { color: #16a34a; }
   .rotate-90 { transform: rotate(90deg); }
@@ -22,98 +14,81 @@
 </head>
 <body class="bg-gray-50 font-sans flex min-h-screen">
 
-  <!-- Navbar kiri -->
-  <nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
-    <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700">
-      Menu
-    </div>
+<!-- Sidebar -->
+<nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
+  <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700">Menu</div>
 
-    <!-- Menu KIB -->
-    <div class="group border-b border-gray-200">
-      <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
-        <span class="font-medium text-gray-700">KIB</span>
-        <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-      </button>
-      <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
-        <a href="inputdata.html" data-sheet="Data KIB" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB B</a>
-        <a href="inputdata.html" data-sheet="KIB B" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">input Data</a>
-        <a href="#" data-sheet="KIB C" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB C</a>
-      </div>
+  <!-- Menu KIB Dropdown -->
+  <div class="group border-b border-gray-200">
+    <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
+      <span class="font-medium text-gray-700">KIB</span>
+      <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+    <div id="kibDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
+      <a href="inputdata.html" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 kib-link">Input KIB B</a>
+      <a href="#" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 kib-link">Input KIB C</a>
     </div>
+  </div>
 
-    <!-- Menu Rekapan -->
-    <div class="group border-b border-gray-200">
-      <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
-        <span class="font-medium text-gray-700">Rekapan</span>
-        <svg id="rekapanArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-      </button>
-      <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
-        <a href="#" data-sheet="Rekapan KIB B" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB B</a>
-        <a href="#" data-sheet="Rekapan KIB C" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
-      </div>
-    </div>
+  <!-- Menu Master Data -->
+  <div class="group border-b border-gray-200">
+    <a href="#" data-sheet="Master Data" class="px-6 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 block">Master Data</a>
+  </div>
+</nav>
 
-    <!-- Menu Master Data -->
-    <div class="group border-b border-gray-200">
-      <a href="#" data-sheet="Master Data" class="px-6 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 block">Master Data</a>
-    </div>
+<!-- Konten utama -->
+<main class="flex-1 p-6 overflow-auto max-w-full">
+  <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Data Satuan Pendidikan</h2>
+
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 max-w-5xl mx-auto">
+    <input id="searchInput" type="text" placeholder="Cari data sekolah..." class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <select id="kecamatanFilter" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-xs">
+      <option value="">Filter Kecamatan (Semua)</option>
+    </select>
+  </div>
+
+  <div class="overflow-x-auto max-w-7xl mx-auto shadow rounded-lg bg-white">
+    <table id="dataTable" class="min-w-full table-auto border-collapse border border-gray-300">
+      <thead class="bg-blue-600 text-white">
+        <tr id="tableHeader" class="text-center"></tr>
+      </thead>
+      <tbody id="tableBody" class="divide-y divide-gray-200"></tbody>
+    </table>
+  </div>
+
+  <nav aria-label="Pagination" class="mt-6 flex justify-center">
+    <ul id="pagination" class="inline-flex space-x-1"></ul>
   </nav>
-
-  <!-- Konten utama -->
-  <main class="flex-1 p-6 overflow-auto max-w-full">
-    <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Data Satuan Pendidikan</h2>
-
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 max-w-5xl mx-auto">
-      <input id="searchInput" type="text" placeholder="Cari data sekolah..." class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-      <select id="kecamatanFilter" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-xs">
-        <option value="">Filter Kecamatan (Semua)</option>
-      </select>
-    </div>
-
-    <div class="overflow-x-auto max-w-7xl mx-auto shadow rounded-lg bg-white">
-      <table id="dataTable" class="min-w-full table-auto border-collapse border border-gray-300">
-        <thead class="bg-blue-600 text-white">
-          <tr id="tableHeader" class="text-center"></tr>
-        </thead>
-        <tbody id="tableBody" class="divide-y divide-gray-200"></tbody>
-      </table>
-    </div>
-
-    <nav aria-label="Pagination" class="mt-6 flex justify-center">
-      <ul id="pagination" class="inline-flex space-x-1"></ul>
-    </nav>
-  </main>
+</main>
 
 <script>
+  // Toggle dropdown
   function toggleDropdown(btnId, dropdownId, arrowId) {
     const btn = document.getElementById(btnId);
     const dropdown = document.getElementById(dropdownId);
     const arrow = document.getElementById(arrowId);
-
     btn.addEventListener('click', () => {
       const isHidden = dropdown.classList.contains('hidden');
       dropdown.classList.toggle('hidden', !isHidden);
       arrow.classList.toggle('rotate-90', isHidden);
     });
   }
-
   toggleDropdown('kibBtn', 'kibDropdown', 'kibArrow');
-  toggleDropdown('rekapanBtn', 'rekapanDropdown', 'rekapanArrow');
 
   const SPREADSHEET_ID = '152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U';
   let SHEET_NAME = 'Master Data';
 
   const rowsPerPage = 50;
-  let allData = [];
-  let filteredData = [];
-  let kibColIndex = -1;
-  let dokBarcodeColIndex = -1;
-  let kecamatanColIndex = -1; // otomatis nanti
+  let allData = [], filteredData = [];
+  let kibColIndex = -1, dokBarcodeColIndex = -1, kecamatanColIndex = -1;
+
+ 
 
   async function loadSheet(sheetName = SHEET_NAME) {
     SHEET_NAME = sheetName;
     const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
-    
     try {
       const res = await fetch(url);
       const text = await res.text();
@@ -121,8 +96,6 @@
       const data = JSON.parse(jsonStr);
 
       const cols = data.table.cols.map(c => c.label);
-
-      // Cari kolom indeks otomatis
       kecamatanColIndex = cols.findIndex(c => c && c.toLowerCase().includes('kecamatan'));
       kibColIndex = cols.findIndex(c => c && c.toLowerCase().includes('kib peralatan dan mesin'));
       dokBarcodeColIndex = cols.findIndex(c => c && c.toLowerCase().includes('dokumen barcode'));
@@ -134,11 +107,7 @@
       renderTableHeader(cols);
       renderKecamatanFilter();
       renderTablePage(1);
-
-    } catch (error) {
-      console.error('Error loading sheet:', error);
-      document.body.insertAdjacentHTML('beforeend', `<p class="text-red-600 text-center mt-4">Gagal memuat data: ${error.message}</p>`);
-    }
+    } catch(e) { console.error('Error load sheet:', e); }
   }
 
   function renderTableHeader(cols) {
@@ -155,140 +124,76 @@
   function renderTablePage(page) {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
-
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    const pageData = filteredData.slice(start, end);
-
-    pageData.forEach(row => {
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-gray-100 transition';
-
-      row.forEach((cell, idx) => {
-        const td = document.createElement('td');
-        td.className = 'px-4 py-2 border border-gray-300 align-middle';
-
-        if (idx === kibColIndex) {
+    const start = (page-1)*rowsPerPage, end=start+rowsPerPage;
+    filteredData.slice(start,end).forEach(row=>{
+      const tr=document.createElement('tr'); tr.className='hover:bg-gray-100 transition';
+      row.forEach((cell,idx)=>{
+        const td=document.createElement('td'); td.className='px-4 py-2 border border-gray-300 align-middle';
+        if(idx===kibColIndex && isValidUrl(cell)){
           td.classList.add('text-center');
-          if (cell && isValidUrl(cell)) {
-            const link = document.createElement('a');
-            link.href = cell;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.title = 'Lihat detail KIB Peralatan dan Mesin';
-            link.innerHTML = '&#128065;';
-            link.classList.add('eye-icon');
-            td.appendChild(link);
-            tr.appendChild(td);
-            return;
-          }
-        } else if (idx === dokBarcodeColIndex) {
+          const link=document.createElement('a');
+          link.href=cell; link.target='_blank'; link.rel='noopener noreferrer';
+          link.title='Lihat detail KIB Peralatan dan Mesin';
+          link.innerHTML='&#128065;'; link.classList.add('eye-icon'); td.appendChild(link);
+        } else if(idx===dokBarcodeColIndex && isValidUrl(cell)){
           td.classList.add('text-center');
-          if (cell && isValidUrl(cell)) {
-            const link = document.createElement('a');
-            link.href = cell;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.title = 'Lihat Dokumen Barcode';
-            link.innerHTML = '&#128214;';
-            link.classList.add('book-icon');
-            td.appendChild(link);
-            tr.appendChild(td);
-            return;
-          }
-        } else {
-          td.classList.add('text-left');
-        }
-
-        td.textContent = cell;
+          const link=document.createElement('a');
+          link.href=cell; link.target='_blank'; link.rel='noopener noreferrer';
+          link.title='Lihat Dokumen Barcode'; link.innerHTML='&#128214;';
+          link.classList.add('book-icon'); td.appendChild(link);
+        } else { td.textContent = cell; td.classList.add('text-left'); }
         tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
+      }); tbody.appendChild(tr);
     });
-
     renderPagination(page);
   }
 
-  function renderPagination(currentPage) {
-    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-
-    function createPageItem(page, label = null, disabled = false, active = false) {
-      const li = document.createElement('li');
-      const btn = document.createElement('button');
-      btn.textContent = label || page;
-      btn.disabled = disabled;
-      btn.className = `px-3 py-1 rounded ${
-        active ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-100'
-      } disabled:opacity-50 disabled:cursor-not-allowed transition`;
-      btn.addEventListener('click', () => {
-        if (!disabled) renderTablePage(page);
-      });
-      li.appendChild(btn);
-      return li;
+  function renderPagination(currentPage){
+    const totalPages=Math.ceil(filteredData.length/rowsPerPage);
+    const pagination=document.getElementById('pagination'); pagination.innerHTML='';
+    function createPageItem(page,label=null,disabled=false,active=false){
+      const li=document.createElement('li'); const btn=document.createElement('button');
+      btn.textContent=label||page; btn.disabled=disabled;
+      btn.className=`px-3 py-1 rounded ${active?'bg-blue-600 text-white':'bg-white text-blue-600 hover:bg-blue-100'} disabled:opacity-50 disabled:cursor-not-allowed transition`;
+      btn.addEventListener('click',()=>{if(!disabled) renderTablePage(page);}); li.appendChild(btn); return li;
     }
-
-    pagination.appendChild(createPageItem(currentPage - 1, '« Prev', currentPage === 1));
-
-    for (let i = 1; i <= totalPages; i++) {
-      pagination.appendChild(createPageItem(i, null, false, i === currentPage));
-    }
-
-    pagination.appendChild(createPageItem(currentPage + 1, 'Next »', currentPage === totalPages));
+    pagination.appendChild(createPageItem(currentPage-1,'« Prev',currentPage===1));
+    for(let i=1;i<=totalPages;i++){pagination.appendChild(createPageItem(i,null,false,i===currentPage));}
+    pagination.appendChild(createPageItem(currentPage+1,'Next »',currentPage===totalPages));
   }
 
-  function renderKecamatanFilter() {
-    const kecamatanFilter = document.getElementById('kecamatanFilter');
-    kecamatanFilter.innerHTML = '<option value="">Filter Kecamatan (Semua)</option>';
-
-    const kecamatans = [...new Set(allData.map(row => row[kecamatanColIndex]))]
-      .filter(k => k && k.trim() !== '')
-      .sort();
-
-    kecamatans.forEach(kec => {
-      const option = document.createElement('option');
-      option.value = kec;
-      option.textContent = kec;
-      kecamatanFilter.appendChild(option);
+  function renderKecamatanFilter(){
+    const kecamatanFilter=document.getElementById('kecamatanFilter'); kecamatanFilter.innerHTML='<option value="">Filter Kecamatan (Semua)</option>';
+    [...new Set(allData.map(row=>row[kecamatanColIndex]))].filter(k=>k&&k.trim()!=='').sort().forEach(kec=>{
+      const option=document.createElement('option'); option.value=kec; option.textContent=kec; kecamatanFilter.appendChild(option);
     });
   }
 
-  function applyFilters() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const kecamatanValue = document.getElementById('kecamatanFilter').value;
-
-    filteredData = allData.filter(row => {
-      const matchesSearch = searchTerm === '' || row.some(cell => String(cell).toLowerCase().includes(searchTerm));
-      const matchesKecamatan = kecamatanValue ? row[kecamatanColIndex] === kecamatanValue : true;
-      return matchesSearch && matchesKecamatan;
+  function applyFilters(){
+    const searchTerm=document.getElementById('searchInput').value.toLowerCase();
+    const kecamatanValue=document.getElementById('kecamatanFilter').value;
+    filteredData=allData.filter(row=>{
+      const matchesSearch=searchTerm===''||row.some(cell=>String(cell).toLowerCase().includes(searchTerm));
+      const matchesKecamatan=kecamatanValue?row[kecamatanColIndex]===kecamatanValue:true;
+      return matchesSearch&&matchesKecamatan;
     });
-
     renderTablePage(1);
   }
 
-  function isValidUrl(str) {
-    try {
-      new URL(str);
-      return true;
-    } catch {
-      return false;
-    }
-  }
+  function isValidUrl(str){try{new URL(str);return true}catch{return false;}}
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('kecamatanFilter').addEventListener('change', applyFilters);
 
-  // Event listener untuk menu
-  document.querySelectorAll('[data-sheet]').forEach(link => {
-    link.addEventListener('click', e => {
+  // Menu Master Data klik langsung load sheet
+  document.querySelectorAll('[data-sheet]').forEach(link=>{
+    link.addEventListener('click',e=>{
       e.preventDefault();
-      const sheetName = link.getAttribute('data-sheet');
-      loadSheet(sheetName);
+      loadSheet(link.getAttribute('data-sheet'));
     });
   });
 
-  // Load default
+  // Load default sheet Master Data
   loadSheet();
 </script>
 </body>
