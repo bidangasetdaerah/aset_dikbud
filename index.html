@@ -13,44 +13,21 @@
     width: 1.5rem;
     height: 1.5rem;
   }
-  .rotate-90 { transform: rotate(90deg); }
 </style>
 </head>
 <body class="bg-gray-50 font-sans flex min-h-screen">
 
-<!-- Navbar kiri -->
+<!-- Sidebar -->
 <nav class="w-64 bg-white shadow-md border-r border-gray-200 flex flex-col">
   <div class="px-6 py-4 border-b border-gray-200 text-xl font-semibold text-blue-700">
     Menu
   </div>
 
-  <!-- Menu KIB -->
+  <!-- Menu Input Data -->
   <div class="group border-b border-gray-200">
-    <button id="kibBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
-      <span class="font-medium text-gray-700">KIB</span>
-      <svg id="kibArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-    </button>
-    <div id="kibDropdown" class="hidden flex-col bg-gray-50 border-t border-gray-200">
-      <a href="inputdata.html" data-sheet="Input Data KIB B" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Input Data KIB B</a>
-      <a href="#" data-sheet="KIB C" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">KIB C</a>
-    </div>
-  </div>
-
-  <!-- Menu Rekapan -->
-  <div class="group border-b border-gray-200">
-    <button id="rekapanBtn" class="w-full flex justify-between items-center px-6 py-3 hover:bg-blue-100 focus:outline-none">
-      <span class="font-medium text-gray-700">Rekapan</span>
-      <svg id="rekapanArrow" class="w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-    </button>
-    <div id="rekapanDropdown" class="hidden flex flex-col bg-gray-50 border-t border-gray-200">
-      <a href="#" data-sheet="Rekapan KIB B" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB B</a>
-      <a href="#" data-sheet="Rekapan KIB C" class="px-10 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">Rekapan KIB C</a>
-    </div>
-  </div>
-
-  <!-- Menu Master Data -->
-  <div class="group border-b border-gray-200">
-    <a href="#" data-sheet="Master Data" class="px-6 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 block">Master Data</a>
+    <a href="inputdata.html" data-sheet="Input Data" class="px-6 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 block font-medium">
+      Input Data
+    </a>
   </div>
 </nav>
 
@@ -82,27 +59,8 @@
 </main>
 
 <script>
-  function toggleDropdown(btnId, dropdownId, arrowId) {
-    const btn = document.getElementById(btnId);
-    const dropdown = document.getElementById(dropdownId);
-    const arrow = document.getElementById(arrowId);
-
-    btn.addEventListener('click', () => {
-      const isHidden = dropdown.classList.contains('hidden');
-      document.querySelectorAll('nav .flex-col').forEach(dd => dd.classList.add('hidden'));
-      document.querySelectorAll('nav svg').forEach(a => a.classList.remove('rotate-90'));
-      if (isHidden) {
-        dropdown.classList.remove('hidden');
-        arrow.classList.add('rotate-90');
-      }
-    });
-  }
-
-  toggleDropdown('kibBtn', 'kibDropdown', 'kibArrow');
-  toggleDropdown('rekapanBtn', 'rekapanDropdown', 'rekapanArrow');
-
   const SPREADSHEET_ID = '152oNQyrJEeg-xW3okB2LKbGIUapxDakDMCbDjqpDl3U';
-  let SHEET_NAME = 'Master Data';
+  let SHEET_NAME = 'Input Data';
 
   const rowsPerPage = 50;
   let allData = [];
@@ -171,18 +129,9 @@
         td.className = 'px-4 py-2 border border-gray-300 align-middle';
 
         if (idx === kibColIndex && kibColIndex !== -1 && isValidUrl(cell)) {
-          td.innerHTML = `<a href="${cell}" target="_blank" title="Lihat KIB" class="icon-btn text-blue-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </a>`;
+          td.innerHTML = `<a href="${cell}" target="_blank" title="Lihat KIB" class="icon-btn text-blue-600">📄</a>`;
         } else if (idx === dokBarcodeColIndex && dokBarcodeColIndex !== -1 && isValidUrl(cell)) {
-          td.innerHTML = `<a href="${cell}" target="_blank" title="Lihat Barcode" class="icon-btn text-green-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-          </a>`;
+          td.innerHTML = `<a href="${cell}" target="_blank" title="Lihat Barcode" class="icon-btn text-green-600">🔖</a>`;
         } else {
           td.textContent = cell;
           td.classList.add('text-left');
@@ -266,16 +215,6 @@
 
   document.getElementById('searchInput').addEventListener('input', applyFilters);
   document.getElementById('kecamatanFilter').addEventListener('change', applyFilters);
-
-  document.querySelectorAll('[data-sheet]').forEach(el => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      const sheetName = el.getAttribute('data-sheet');
-      loadSheet(sheetName);
-      document.querySelectorAll('nav .flex-col').forEach(dd => dd.classList.add('hidden'));
-      document.querySelectorAll('nav svg').forEach(a => a.classList.remove('rotate-90'));
-    });
-  });
 
   loadSheet();
 </script>
